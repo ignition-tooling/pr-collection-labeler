@@ -42,8 +42,7 @@ async function run() {
 
       if (lib == undefined)
       {
-        // test
-        lib = collectionYaml.repositories['ign-cmake'];
+        continue;
       }
 
       if (lib.version == target) {
