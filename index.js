@@ -1,19 +1,64 @@
 const core = require('@actions/core');
-const wait = require('./wait');
+const github = require('@actions/github');
+const yaml = require('js-yaml');
 
-
-// most @actions toolkit packages have async methods
 async function run() {
-  try { 
-    const ms = core.getInput('milliseconds');
-    console.log(`Waiting ${ms} milliseconds ...`)
+  try {
+    if (github.context.payload.pull_request === undefined) {
+      core.debug('Labeler action must be run for pull requests.');
+      return;
+    }
 
-    core.debug((new Date()).toTimeString())
-    await wait(parseInt(ms));
-    core.debug((new Date()).toTimeString())
+    const library = github.context.payload.repository.name;
+    const target = github.context.payload.pull_request.base.ref;
 
-    core.setOutput('time', new Date().toTimeString());
-  } 
+    const token = core.getInput('github-token', { required: true });
+    if (!token) {
+      core.debug('Failed to get token');
+      return;
+    }
+    const gh = new github.GitHub(token);
+
+    const owner = 'ignition-tooling';
+    const repo = 'gazebodistro';
+
+    let labels = [];
+
+    const collections = [
+      {name: 'blueprint', label: '📜 blueprint'},
+      {name: 'citadel', label: '🏰 citadel'},
+      {name: 'dome', label: '🔮 dome'}
+    ];
+
+    for (const collection of collections) {
+
+      const path = 'collection-' + collection.name + '.yaml';
+
+      const collectionRes = await gh.repos.getContents({owner, repo, path});
+      const collectionContent = Buffer.from(collectionRes.data.content, 'base64').toString();
+      const collectionYaml = yaml.safeLoad(collectionContent);
+
+      let lib = collectionYaml.repositories[library];
+
+      if (lib == undefined)
+      {
+        // test
+        lib = collectionYaml.repositories['ign-cmake'];
+      }
+
+      if (lib.version == target) {
+        labels.push(collection.label);
+      }
+    }
+
+    if (labels.length > 0) {
+      const prNumber = github.context.payload.pull_request.number;
+      core.debug(`Adding labels: [${labels}] to PR [${prNumber}]`);
+      gh.issues.addLabels(
+        Object.assign({issue_number: prNumber, labels: labels },
+        github.context.repo));
+    }
+  }
   catch (error) {
     core.setFailed(error.message);
   }
