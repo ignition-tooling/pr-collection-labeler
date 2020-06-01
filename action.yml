@@ -2,7 +2,7 @@ name: 'PR collection labeler'
 description: 'Add collection labels to pull requests according to the base branch'
 author: "Louise Poubel"
 inputs:
-  github_token:
+  github-token:
     description: "Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}"
     required: true
 runs:
