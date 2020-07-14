@@ -72,6 +72,7 @@ async function run() {
       prs.push(github.context.payload.pull_request)
     } else {
       prs = gh.pulls.list({owner: 'ignitionrobotics', repo: library, state: 'open'});
+      core.debug('LIBRARY: ', library);
       core.debug(JSON.stringify(prs, null, '\t'));
     }
 
