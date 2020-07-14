@@ -5,6 +5,9 @@ inputs:
   github-token:
     description: "Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}"
     required: false
+  repository:
+    description: "Repository name - couldn't find out how to get automatically."
+    required: false
   gazebodistro-branch:
     description: "Branch of gazebodistro to use."
     required: false

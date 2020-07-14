@@ -25,7 +25,6 @@ async function run() {
       isPR = true;
     }
 
-
     let distroBranch = core.getInput('gazebodistro-branch', { required: false });
     if (!distroBranch) {
       distroBranch = 'master';
@@ -77,11 +76,11 @@ async function run() {
     }
 
     // Iterate over PRs and label them
-    for (const pr of prs) {
+    for (var i = 0; i < prs.length; i++) {
       let labels = [];
 
       for (const collection of collections) {
-        if (collection.branch == pr.base.ref) {
+        if (collection.branch == prs[i].base.ref) {
           labels.push(collection.label);
         }
       }
