@@ -1056,18 +1056,24 @@ const yaml = __webpack_require__(414);
 
 async function run() {
   try {
+
+    core.debug(JSON.stringify(github, null, '\t'));
+
     let isPR = false;
+    let library = '';
     if (github.context.payload.pull_request === undefined) {
       core.debug('Labeler action not running for pull request.');
+      library = core.getInput('repository', { required: false });
+      if (!library) {
+        core.debug('Non-PR action requires repository name.');
+        return;
+      }
     } else {
       core.debug('Labeler action running for pull request.');
+      library = github.context.payload.repository.name;
       isPR = true;
     }
 
-    core.debug(JSON.stringify(github.context));
-    const org = github.context.repository_owner;
-    let library = github.context.repository;
-    library = library.substring(library.indexOf('/') + 1)
 
     let distroBranch = core.getInput('gazebodistro-branch', { required: false });
     if (!distroBranch) {
@@ -1083,9 +1089,6 @@ async function run() {
     const gh = new github.GitHub(token);
 
     // Get the branch for this library in each collection
-    const owner = 'ignition-tooling';
-    const repo = 'gazebodistro';
-
     const collections = [
       {name: 'blueprint', label: '📜 blueprint', branch: ''},
       {name: 'citadel', label: '🏰 citadel', branch: ''},
@@ -1096,7 +1099,11 @@ async function run() {
 
       const path = 'collection-' + collection.name + '.yaml';
 
-      const collectionRes = await gh.repos.getContents({owner, repo, path, distroBranch});
+      const collectionRes = await gh.repos.getContents({
+        owner: 'ignition-tooling',
+        repo: 'gazebodistro',
+        path: path,
+        ref: distroBranch});
       const collectionContent = Buffer.from(collectionRes.data.content, 'base64').toString();
       const collectionYaml = yaml.safeLoad(collectionContent);
 
@@ -1115,7 +1122,7 @@ async function run() {
     if (isPR) {
       prs.push(github.context.payload.pull_request)
     } else {
-      prs = gh.pulls.list({owner: org, repo: library, state: 'open'});
+      prs = gh.pulls.list({owner: 'ignitionrobotics', repo: library, state: 'open'});
     }
 
     // Iterate over PRs and label them

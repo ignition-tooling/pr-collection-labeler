@@ -5,7 +5,7 @@ const yaml = require('js-yaml');
 async function run() {
   try {
 
-    core.debug(JSON.stringify(github, null, '\t')
+    core.debug(JSON.stringify(github, null, '\t'));
 
     let isPR = false;
     let library = '';
@@ -48,7 +48,10 @@ async function run() {
       const path = 'collection-' + collection.name + '.yaml';
 
       const collectionRes = await gh.repos.getContents({
-        'ignition-tooling', 'gazebodistro', path, distroBranch});
+        owner: 'ignition-tooling',
+        repo: 'gazebodistro',
+        path: path,
+        ref: distroBranch});
       const collectionContent = Buffer.from(collectionRes.data.content, 'base64').toString();
       const collectionYaml = yaml.safeLoad(collectionContent);
 
