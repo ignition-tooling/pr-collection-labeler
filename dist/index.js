@@ -1067,8 +1067,10 @@ async function run() {
       library = core.getInput('repository', { required: false });
       if (!library) {
         core.debug('Non-PR action requires repository name.');
-        return;
+        library = 'testing';
+        // return;
       }
+      library = library.split('/')[1];
     } else {
       core.debug('Labeler action running for pull request.');
       library = github.context.payload.repository.name;
