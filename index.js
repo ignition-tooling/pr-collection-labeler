@@ -12,10 +12,12 @@ async function run() {
       isPR = true;
     }
 
-    const org = github.context.payload.repository.owner.name;
-    const library = github.context.payload.repository.name;
+    core.debug(JSON.stringify(github.context));
+    const org = github.context.repository_owner;
+    let library = github.context.repository;
+    library = library.substring(library.indexOf('/') + 1)
 
-    const distroBranch = core.getInput('gazebodistro-branch', { required: false });
+    let distroBranch = core.getInput('gazebodistro-branch', { required: false });
     if (!distroBranch) {
       distroBranch = 'master';
     }
