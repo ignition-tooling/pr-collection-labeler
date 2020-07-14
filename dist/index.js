@@ -1058,7 +1058,6 @@ async function run() {
   try {
 
     core.debug(JSON.stringify(github, null, '\t'));
-    core.debug(JSON.stringify(github.repository, null, '\t'));
 
     let isPR = false;
     let library = '';
@@ -1076,7 +1075,6 @@ async function run() {
       library = github.context.payload.repository.name;
       isPR = true;
     }
-
 
     let distroBranch = core.getInput('gazebodistro-branch', { required: false });
     if (!distroBranch) {
@@ -1126,20 +1124,21 @@ async function run() {
       prs.push(github.context.payload.pull_request)
     } else {
       prs = gh.pulls.list({owner: 'ignitionrobotics', repo: library, state: 'open'});
+      core.debug(JSON.stringify(prs, null, '\t'));
     }
 
     // Iterate over PRs and label them
-    for (const pr of prs) {
+    for (var i = 0; i < prs.length; i++) {
       let labels = [];
 
       for (const collection of collections) {
-        if (collection.branch == pr.base.ref) {
+        if (collection.branch == prs[i].base.ref) {
           labels.push(collection.label);
         }
       }
 
       if (labels.length > 0) {
-        const prNumber = pr.number;
+        const prNumber = prs[i].number;
         core.debug(`Adding labels: [${labels}] to PR [${prNumber}]`);
         gh.issues.addLabels(
           Object.assign({issue_number: prNumber, labels: labels },
