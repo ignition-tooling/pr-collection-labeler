@@ -15,7 +15,12 @@ async function run() {
     const org = github.context.payload.repository.owner.name;
     const library = github.context.payload.repository.name;
 
-    const token = core.getInput('github-token', { required: true });
+    const distroBranch = core.getInput('gazebodistro-branch', { required: false });
+    if (!distroBranch) {
+      distroBranch = 'master';
+    }
+
+    const token = core.getInput('github-token', { required: false });
     if (!token) {
       // Not necessarily an error, PRs from forks end up here
       core.debug('Failed to get token');
@@ -37,7 +42,7 @@ async function run() {
 
       const path = 'collection-' + collection.name + '.yaml';
 
-      const collectionRes = await gh.repos.getContents({owner, repo, path});
+      const collectionRes = await gh.repos.getContents({owner, repo, path, distroBranch});
       const collectionContent = Buffer.from(collectionRes.data.content, 'base64').toString();
       const collectionYaml = yaml.safeLoad(collectionContent);
 

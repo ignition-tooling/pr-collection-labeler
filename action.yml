@@ -5,6 +5,9 @@ inputs:
   github-token:
     description: "Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}"
     required: false
+  gazebodistro-branch:
+    description: "Branch of gazebodistro to use."
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
