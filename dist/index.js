@@ -1058,6 +1058,7 @@ async function run() {
   try {
 
     core.debug(JSON.stringify(github, null, '\t'));
+    core.debug(JSON.stringify(github.repository, null, '\t'));
 
     let isPR = false;
     let library = '';
