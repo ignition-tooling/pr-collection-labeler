@@ -45,4 +45,4 @@ Run tests:
 
 Package files into the `dist` folder:
 
-    npm dist
+    npm run package
