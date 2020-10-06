@@ -28,6 +28,7 @@ async function run() {
       {name: 'blueprint', label: '📜 blueprint'},
       {name: 'citadel', label: '🏰 citadel'},
       {name: 'dome', label: '🔮 dome'}
+      {name: 'edifice', label: '🏢 edifice'}
     ];
 
     for (const collection of collections) {
