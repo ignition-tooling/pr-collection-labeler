@@ -1029,6 +1029,7 @@ async function run() {
 
     const library = github.context.payload.repository.name;
     const target = github.context.payload.pull_request.base.ref;
+    const prNumber = github.context.payload.pull_request.number;
 
     const token = core.getInput('github-token', { required: true });
     if (!token) {
@@ -1070,7 +1071,6 @@ async function run() {
     }
 
     if (labels.length > 0) {
-      const prNumber = github.context.payload.pull_request.number;
       core.debug(`Adding labels: [${labels}] to PR [${prNumber}]`);
       gh.issues.addLabels(
         Object.assign({issue_number: prNumber, labels: labels },
