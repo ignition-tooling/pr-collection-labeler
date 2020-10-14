@@ -1076,6 +1076,16 @@ async function run() {
         Object.assign({issue_number: prNumber, labels: labels },
         github.context.repo));
     }
+    else if (library == 'testing') {
+      labels.push('labeled!');
+      core.debug(`Adding labels: [${labels}] to PR [${prNumber}]`);
+      gh.issues.addLabels(
+        Object.assign({issue_number: prNumber, labels: labels },
+        github.context.repo));
+    }
+    else {
+      core.debug(`No labels added for PR [${prNumber}]`);
+    }
   }
   catch (error) {
     core.setFailed(error.message);
