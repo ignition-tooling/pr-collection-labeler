@@ -25,7 +25,6 @@ async function run() {
     let labels = [];
 
     const collections = [
-      {name: 'blueprint', label: '📜 blueprint'},
       {name: 'citadel', label: '🏰 citadel'},
       {name: 'dome', label: '🔮 dome'},
       {name: 'edifice', label: '🏢 edifice'},
